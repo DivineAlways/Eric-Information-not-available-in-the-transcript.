@@ -1,0 +1,739 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow Pro - Prototype</title>
+    <style>
+        /*
+        * CORE STYLES & RESETS
+        * Basic CSS for wireframe appearance and mobile responsiveness.
+        */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --background-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --border-color: #dee2e6;
+            --text-color: #343a40;
+            --heading-color: #212529;
+            --spacing-unit: 1rem; /* 16px */
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-unit);
+        }
+
+        /*
+        * GENERAL PROTOTYPE ELEMENTS
+        * Styles for buttons, forms, and basic layout components.
+        */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--heading-color);
+            margin-bottom: var(--spacing-unit);
+        }
+
+        p {
+            margin-bottom: var(--spacing-unit);
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--surface-color);
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+            margin-bottom: 0.5rem; /* For stackable buttons */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+        .btn-block {
+            width: 100%;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-unit);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            padding: var(--spacing-unit);
+            margin-bottom: var(--spacing-unit);
+        }
+
+        .list-group {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .list-group-item {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            padding: var(--spacing-unit);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-group-item:first-child {
+            border-top: 1px solid var(--border-color);
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+        }
+
+        .list-group-item:last-child {
+            border-bottom-left-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-unit);
+        }
+
+        .flex-col-50 {
+            flex: 1 1 calc(50% - var(--spacing-unit) / 2);
+        }
+
+        .flex-col-33 {
+            flex: 1 1 calc(33.333% - var(--spacing-unit) * 2 / 3);
+        }
+
+        /*
+        * SCREEN MANAGEMENT
+        * Logic for showing/hiding different prototype screens.
+        */
+        .screen {
+            display: none; /* All screens are hidden by default */
+            min-height: calc(100vh - 4rem); /* Adjust based on header/footer if present */
+            padding: 2rem 0; /* Vertical padding for screen content */
+        }
+
+        .screen.active {
+            display: block; /* Active screen is displayed */
+        }
+
+        /*
+        * NAVIGATION BAR
+        * Top navigation for authenticated users.
+        */
+        .navbar {
+            background-color: var(--heading-color);
+            padding: 0.8rem var(--spacing-unit);
+            color: var(--surface-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--surface-color);
+        }
+
+        .navbar-nav {
+            display: none; /* Hidden by default on mobile */
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-nav li {
+            margin-left: var(--spacing-unit);
+        }
+
+        .navbar-nav a {
+            color: var(--surface-color);
+            padding: 0.5rem 0.8rem;
+            display: block;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .navbar-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+        }
+
+        .navbar-toggler {
+            display: block; /* Visible on mobile */
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--surface-color);
+            cursor: pointer;
+        }
+
+        .navbar-nav.show {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 4rem; /* Below navbar */
+            left: 0;
+            width: 100%;
+            background-color: var(--heading-color);
+            padding: var(--spacing-unit);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar-nav.show li {
+            margin: 0 0 0.5rem 0;
+        }
+
+        /*
+        * MEDIA QUERIES FOR RESPONSIVENESS
+        * Adjusts layout for larger screens (tablets, desktops).
+        */
+        @media (min-width: 768px) {
+            .navbar-nav {
+                display: flex; /* Always show on desktop */
+                flex-direction: row;
+                position: static;
+                width: auto;
+                background: none;
+                padding: 0;
+                border: none;
+            }
+
+            .navbar-nav li {
+                margin-left: var(--spacing-unit);
+                margin-bottom: 0;
+            }
+
+            .navbar-toggler {
+                display: none; /* Hide on desktop */
+            }
+
+            .flex-col-50 {
+                flex: 0 0 calc(50% - var(--spacing-unit) / 2);
+            }
+
+            .flex-col-33 {
+                flex: 0 0 calc(33.333% - var(--spacing-unit) * 2 / 3);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!--
+    * GLOBAL NAVIGATION BAR (FOR AUTHENTICATED VIEWS)
+    * This navigation bar will be visible on all screens except the initial Home and Auth screens.
+    * It provides quick links to the main sections of the application.
+    -->
+    <header class="navbar" id="global-navbar" style="display: none;">
+        <div class="navbar-brand">TaskFlow Pro</div>
+        <button class="navbar-toggler" onclick="toggleNavMenu()">☰</button>
+        <nav class="navbar-nav" id="main-nav-menu">
+            <li><a href="#" onclick="showScreen('dashboard-screen')">Dashboard</a></li>
+            <li><a href="#" onclick="showScreen('projects-screen')">Projects</a></li>
+            <li><a href="#" onclick="showScreen('settings-screen')">Settings</a></li>
+            <li><a href="#" onclick="showScreen('home-screen'); hideNavbar();">Logout</a></li>
+        </nav>
+    </header>
+
+    <!--
+    * HOME / START SCREEN
+    * This is the initial landing page of the prototype.
+    * It provides options to log in or sign up, serving as the main entry point.
+    -->
+    <main id="home-screen" class="screen active">
+        <div class="container" style="text-align: center; padding-top: 5rem;">
+            <h1>Welcome to TaskFlow Pro</h1>
+            <p>Your ultimate solution for efficient project and task management.</p>
+            <div style="margin-top: 2rem;">
+                <button class="btn-block" onclick="showScreen('auth-screen');">Get Started / Log In</button>
+            </div>
+            <p style="margin-top: 2rem; font-size: 0.8rem; color: var(--secondary-color);">
+                <a href="#documentation" onclick="showDocumentation()">Prototype Documentation</a>
+            </p>
+        </div>
+    </main>
+
+    <!--
+    * AUTHENTICATION SCREEN (LOGIN / SIGNUP)
+    * This screen allows users to log in to an existing account or create a new one.
+    * It includes a simple toggle or tab-like functionality simulated with JS.
+    -->
+    <section id="auth-screen" class="screen">
+        <div class="container" style="max-width: 400px; padding-top: 2rem;">
+            <div class="card">
+                <div style="display: flex; margin-bottom: var(--spacing-unit);">
+                    <button class="btn-secondary btn-block" id="login-tab-btn" onclick="toggleAuthForm('login')" style="border-radius: 0.25rem 0 0 0.25rem;">Login</button>
+                    <button class="btn-secondary btn-block" id="signup-tab-btn" onclick="toggleAuthForm('signup')" style="border-radius: 0 0.25rem 0.25rem 0;">Sign Up</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form">
+                    <h2>Log In</h2>
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="********" required>
+                    </div>
+                    <button type="button" class="btn-block" onclick="showScreen('dashboard-screen'); showNavbar();">Log In</button>
+                    <p style="text-align: center; margin-top: var(--spacing-unit); font-size: 0.9rem;">
+                        <a href="#">Forgot password?</a>
+                    </p>
+                </form>
+
+                <!-- Signup Form (hidden by default) -->
+                <form id="signup-form" style="display: none;">
+                    <h2>Sign Up</h2>
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="********" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" placeholder="********" required>
+                    </div>
+                    <button type="button" class="btn-block" onclick="showScreen('dashboard-screen'); showNavbar();">Sign Up</button>
+                </form>
+            </div>
+            <div style="text-align: center; margin-top: var(--spacing-unit);">
+                <button class="btn-secondary" onclick="showScreen('home-screen')">Back to Home</button>
+            </div>
+        </div>
+    </section>
+
+    <!--
+    * DASHBOARD SCREEN
+    * This screen provides an overview of the user's projects and tasks.
+    * It includes summary cards and quick access to recent activities.
+    -->
+    <section id="dashboard-screen" class="screen">
+        <div class="container">
+            <h1>Dashboard Overview</h1>
+            <p>Welcome back, [User Name]!</p>
+
+            <div class="flex-row">
+                <div class="flex-col-50 card">
+                    <h3>📊 Project Summary</h3>
+                    <p>Total Projects: <strong>12</strong></p>
+                    <p>Active Projects: <strong>5</strong></p>
+                    <p>Completed Projects: <strong>7</strong></p>
+                    <button class="btn-block" onclick="showScreen('projects-screen')">View All Projects</button>
+                </div>
+                <div class="flex-col-50 card">
+                    <h3>✅ Task Statistics</h3>
+                    <p>Tasks Due Today: <strong>3</strong></p>
+                    <p>Overdue Tasks: <strong>1</strong></p>
+                    <p>Total Open Tasks: <strong>25</strong></p>
+                    <button class="btn-block">Add New Task</button>
+                </div>
+            </div>
+
+            <h2>Recent Activity</h2>
+            <div class="card">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span>Task "Review UI Designs" updated in Project A.</span>
+                        <small>2 hours ago</small>
+                    </li>
+                    <li class="list-group-item">
+                        <span>New comment on "Develop Feature X" in Project B.</span>
+                        <small>Yesterday</small>
+                    </li>
+                    <li class="list-group-item">
+                        <span>Project C status changed to "In Progress".</span>
+                        <small>2 days ago</small>
+                    </li>
+                </ul>
+            </div>
+
+            <h2>Quick Actions</h2>
+            <div class="flex-row">
+                <button class="flex-col-33" onclick="showScreen('projects-screen'); /* Simulate add new project */">Create New Project</button>
+                <button class="flex-col-33">Log Time</button>
+                <button class="flex-col-33">Generate Report</button>
+            </div>
+        </div>
+    </section>
+
+    <!--
+    * PROJECTS LIST SCREEN
+    * Displays a list of all projects with their current status.
+    * Allows users to click on a project to view its details.
+    -->
+    <section id="projects-screen" class="screen">
+        <div class="container">
+            <h1>All Projects</h1>
+            <button style="margin-bottom: var(--spacing-unit);">+ Add New Project</button>
+
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div>
+                        <h3>Project Alpha</h3>
+                        <p>Status: <span style="color: orange;">In Progress</span></p>
+                        <p>Due Date: 2023-12-31</p>
+                    </div>
+                    <button onclick="showScreen('project-detail-screen')">View Details</button>
+                </div>
+                <div class="list-group-item">
+                    <div>
+                        <h3>Project Beta</h3>
+                        <p>Status: <span style="color: green;">Completed</span></p>
+                        <p>Due Date: 2023-11-15</p>
+                    </div>
+                    <button onclick="showScreen('project-detail-screen')">View Details</button>
+                </div>
+                <div class="list-group-item">
+                    <div>
+                        <h3>Project Gamma</h3>
+                        <p>Status: <span style="color: red;">Overdue</span></p>
+                        <p>Due Date: 2023-10-01</p>
+                    </div>
+                    <button onclick="showScreen('project-detail-screen')">View Details</button>
+                </div>
+                <div class="list-group-item">
+                    <div>
+                        <h3>Project Delta</h3>
+                        <p>Status: <span style="color: orange;">In Progress</span></p>
+                        <p>Due Date: 2024-01-20</p>
+                    </div>
+                    <button onclick="showScreen('project-detail-screen')">View Details</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--
+    * PROJECT DETAIL / TASKS SCREEN
+    * Displays detailed information for a specific project, including its tasks.
+    * Allows adding new tasks and interacting with existing ones.
+    -->
+    <section id="project-detail-screen" class="screen">
+        <div class="container">
+            <h1>Project Alpha Details</h1>
+            <button class="btn-secondary" onclick="showScreen('projects-screen')">← Back to Projects</button>
+            
+            <div class="card" style="margin-top: var(--spacing-unit);">
+                <h2>Project Overview</h2>
+                <p><strong>Status:</strong> In Progress</p>
+                <p><strong>Due Date:</strong> 2023-12-31</p>
+                <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <p><strong>Assigned To:</strong> Team A</p>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                    <button>Edit Project</button>
+                    <button class="btn-secondary">Mark as Complete</button>
+                </div>
+            </div>
+
+            <h2>Tasks for Project Alpha</h2>
+            <button style="margin-bottom: var(--spacing-unit);">+ Add New Task</button>
+
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div>
+                        <h4>Task 1: Design UI Mockups</h4>
+                        <p><small>Due: 2023-11-20 | Status: In Progress</small></p>
+                    </div>
+                    <button>View</button>
+                </div>
+                <div class="list-group-item">
+                    <div>
+                        <h4>Task 2: Develop Backend API</h4>
+                        <p><small>Due: 2023-12-10 | Status: Not Started</small></p>
+                    </div>
+                    <button>View</button>
+                </div>
+                <div class="list-group-item">
+                    <div>
+                        <h4>Task 3: Write Documentation</h4>
+                        <p><small>Due: 2023-12-25 | Status: Completed</small></p>
+                    </div>
+                    <button>View</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--
+    * SETTINGS SCREEN
+    * Allows users to manage their profile, preferences, and other application settings.
+    -->
+    <section id="settings-screen" class="screen">
+        <div class="container">
+            <h1>User Settings</h1>
+
+            <div class="card">
+                <h2>👤 Profile Information</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="setting-name">Name</label>
+                        <input type="text" id="setting-name" value="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="setting-email">Email</label>
+                        <input type="email" id="setting-email" value="john.doe@example.com">
+                    </div>
+                    <button type="button">Update Profile</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>⚙️ Account Settings</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="setting-old-password">Old Password</label>
+                        <input type="password" id="setting-old-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="setting-new-password">New Password</label>
+                        <input type="password" id="setting-new-password">
+                    </div>
+                    <button type="button">Change Password</button>
+                </form>
+                <hr style="margin: 1rem 0; border-color: var(--border-color);">
+                <button class="btn-secondary" onclick="alert('Account Deleted! This is a prototype.')">Delete Account</button>
+            </div>
+
+            <div class="card">
+                <h2>🔔 Notification Preferences</h2>
+                <form>
+                    <div class="form-group">
+                        <label><input type="checkbox" checked> Email notifications for new tasks</label>
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox"> Desktop notifications for project updates</label>
+                    </div>
+                    <button type="button">Save Preferences</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!--
+    * DOCUMENTATION SCREEN (Hidden by default, shown via link on home page)
+    * This screen provides a brief overview of the prototype's purpose and features.
+    -->
+    <section id="documentation-screen" class="screen">
+        <div class="container">
+            <h1>Prototype Documentation</h1>
+            <button class="btn-secondary" onclick="showScreen('home-screen')">← Back to Home</button>
+            <div class="card" style="margin-top: var(--spacing-unit);">
+                <h2>Project: TaskFlow Pro Prototype</h2>
+                <p><strong>Type:</strong> Web App</p>
+                <p><strong>Target Audience:</strong> Small to Medium Businesses, Project Managers, Team Leads</p>
+                <p>This interactive wireframe provides a visual representation of the core functionalities for TaskFlow Pro. It's designed to be simple, clean, and mobile-responsive, focusing on user flow and layout rather than final UI elements.</p>
+                
+                <h3>Core Features Included:</h3>
+                <ul>
+                    <li><strong>User Authentication:</strong> Basic Login and Sign Up forms.</li>
+                    <li><strong>Dashboard:</strong> High-level overview of projects and tasks.</li>
+                    <li><strong>Project Management:</strong> Listing projects and viewing their details.</li>
+                    <li><strong>Task Management:</strong> Viewing tasks associated with a project.</li>
+                    <li><strong>User Settings:</strong> Profile, account, and notification preferences.</li>
+                </ul>
+
+                <h3>Navigation:</h3>
+                <p>Use the buttons and links throughout the prototype to navigate between the different screens. The global navigation bar appears once you are "logged in".</p>
+                
+                <h3>Notes for Developers:</h3>
+                <ul>
+                    <li>This prototype uses pure HTML, CSS, and JavaScript. No external libraries or frameworks are used.</li>
+                    <li>CSS is embedded in the `&lt;style&gt;` tag in the head, and JavaScript is at the end of the `&lt;body&gt;`.</li>
+                    <li>Screens are implemented as `div` elements, shown/hidden using JavaScript based on navigation actions.</li>
+                    <li>Placeholder content (`&lt;p&gt;`, `&lt;h&gt;`, `&lt;img&gt;` with empty `src`) is used throughout.</li>
+                    <li>Semantic HTML5 elements are utilized for better structure and accessibility.</li>
+                    <li>The layout is designed to be fully mobile-responsive using Flexbox and media queries.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!--
+    * JAVASCRIPT FOR INTERACTIVITY
+    * Handles screen switching, navigation bar visibility, and form toggles.
+    -->
+    <script>
+        /**
+         * @function showScreen
+         * Hides all screens and displays the specified screen.
+         * @param {string} screenId - The ID of the screen to display.
+         */
+        function showScreen(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+
+            // Close mobile nav menu if open
+            const navMenu = document.getElementById('main-nav-menu');
+            if (navMenu.classList.contains('show')) {
+                navMenu.classList.remove('show');
+            }
+        }
+
+        /**
+         * @function toggleAuthForm
+         * Toggles between the Login and Sign Up forms on the authentication screen.
+         * @param {string} formType - 'login' or 'signup'
+         */
+        function toggleAuthForm(formType) {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const loginTabBtn = document.getElementById('login-tab-btn');
+            const signupTabBtn = document.getElementById('signup-tab-btn');
+
+            if (formType === 'login') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                loginTabBtn.style.backgroundColor = 'var(--primary-color)';
+                signupTabBtn.style.backgroundColor = 'var(--secondary-color)';
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                loginTabBtn.style.backgroundColor = 'var(--secondary-color)';
+                signupTabBtn.style.backgroundColor = 'var(--primary-color)';
+            }
+        }
+
+        /**
+         * @function showNavbar
+         * Displays the global navigation bar.
+         */
+        function showNavbar() {
+            document.getElementById('global-navbar').style.display = 'flex';
+        }
+
+        /**
+         * @function hideNavbar
+         * Hides the global navigation bar.
+         */
+        function hideNavbar() {
+            document.getElementById('global-navbar').style.display = 'none';
+        }
+
+        /**
+         * @function toggleNavMenu
+         * Toggles the visibility of the mobile navigation menu.
+         */
+        function toggleNavMenu() {
+            const navMenu = document.getElementById('main-nav-menu');
+            navMenu.classList.toggle('show');
+        }
+
+        /**
+         * @function showDocumentation
+         * Hides the navbar if shown and displays the documentation screen.
+         * This is typically accessed from the home screen before login.
+         */
+        function showDocumentation() {
+            hideNavbar();
+            showScreen('documentation-screen');
+        }
+
+        // Initialize the authentication form to show login by default when auth screen is visited
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if hash exists in URL and navigate if it refers to a screen
+            if (window.location.hash) {
+                const screenIdFromHash = window.location.hash.substring(1);
+                const screenElement = document.getElementById(screenIdFromHash);
+                if (screenElement && screenElement.classList.contains('screen')) {
+                    showScreen(screenIdFromHash);
+                    if (screenIdFromHash !== 'home-screen' && screenIdFromHash !== 'auth-screen' && screenIdFromHash !== 'documentation-screen') {
+                        showNavbar();
+                    } else {
+                        hideNavbar();
+                    }
+                }
+            }
+            // Default to home screen if no valid hash or on initial load
+            if (!document.querySelector('.screen.active')) {
+                showScreen('home-screen');
+                hideNavbar(); // Ensure navbar is hidden on initial home screen load
+            }
+            // Ensure auth form starts with login if it's the active screen
+            if (document.getElementById('auth-screen').classList.contains('active')) {
+                toggleAuthForm('login');
+            }
+        });
+    </script>
+
+</body>
+</html>
+```
